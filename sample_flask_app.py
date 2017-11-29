@@ -1,6 +1,8 @@
 # Import statements necessary
 from flask import Flask, render_template
 from flask_script import Manager
+import requests
+import json
 
 # Set up application
 app = Flask(__name__)
@@ -28,6 +30,18 @@ def basic_values_list(name):
         shortname = name
     return render_template('values.html',word_list=lst,long_name=longname,short_name=shortname)
 
+@app.route('/word/<new_word>')
+def new_word(new_word):
+    baseurl = 'https://api.datamuse.com/words'
+    params = {
+        "rel_rhy":new_word
+    }
+    response = requests.get(baseurl, params=params)
+    s = response.text
+    word_list = json.loads(s)
+    one_word = word_list[0]["word"]
+
+    return '<h1>{}</h1>'.format(one_word)
 
 ## PART 1: Add another route /word/<new_word> as the instructions describe.
 
